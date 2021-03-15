@@ -23,4 +23,6 @@ export const icons = {
   copy: 'mdi-content-copy',
   rightforward: 'mdi-forwardburger',
   leftback: 'mdi-backburger',
+  fullScreen: 'mdi-fullscreen',
+  fullScreenExit: 'mdi-fullscreen-exit',
 };

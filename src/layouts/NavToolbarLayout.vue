@@ -3,12 +3,14 @@
     app
     :dense="toolbarDense"
     prominent
-    dark
+    light
     flat
     class="qk-toolbar"
     :clipped-left="drawerPosition !== 'right'"
     :clipped-right="drawerPosition === 'right'"
   >
+    <v-spacer />
+    <full-screen-icon />
     <template v-slot:img="{ props }">
       <v-img v-bind="props" :src="toolbarBgImg"></v-img>
     </template>
@@ -18,10 +20,13 @@
 <script>
 import { mapGetters } from 'vuex';
 
+import FullScreenIcon from '@ui/widgets/FullScreenIcon.vue';
 import toolbarImg from '@ui/assets/images/toolbar_bg.jpg';
 export default {
   name: 'NavToolbarLayout',
-  components: {},
+  components: {
+    FullScreenIcon,
+  },
   data() {
     return {
       toolbarBgImg: toolbarImg,
@@ -32,8 +37,4 @@ export default {
   },
 };
 </script>
-<style>
-.qk-toolbar {
-  color: #fff;
-}
-</style>
+<style></style>

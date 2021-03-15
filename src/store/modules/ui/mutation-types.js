@@ -1,1 +1,1 @@
-export default {};
+export const UPD_FULLSCREEN_STATE = 'UPD_FULLSCREEN_STATE';

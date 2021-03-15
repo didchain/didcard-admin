@@ -1,6 +1,6 @@
 <template>
   <v-footer app :dense="toolbarDense">
-    <v-container class="px-0 py-0">Footer</v-container>
+    <v-container class="px-0 py-0 qk-footer">Footer</v-container>
   </v-footer>
 </template>
 
@@ -16,4 +16,7 @@ export default {
   },
 };
 </script>
-<style></style>
+<style lang="sass">
+.qk-footer
+  color: $footerColor
+</style>

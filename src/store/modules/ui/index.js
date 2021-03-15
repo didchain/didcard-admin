@@ -11,6 +11,7 @@ export default {
     globalDense: true,
     navDrawerShow: true,
     drawerPosition: 'left',
+    fullScreenState: false,
   },
   actions,
   getters: {
@@ -19,6 +20,7 @@ export default {
     drawerPosition: (state) => state.drawerPosition,
     navDrawerShow: (state) => state.navDrawerShow,
     navDrawerRight: (state) => state.drawerPosition === 'right',
+    fullScreenState: (state) => state.fullScreenState,
     ...getters,
   },
   mutations,
