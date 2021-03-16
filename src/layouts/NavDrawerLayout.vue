@@ -2,9 +2,10 @@
   <v-navigation-drawer
     app
     fixed
+    light
     :value="navDrawerShow"
     :right="navDrawerRight"
-    :clipped="false"
+    :clipped="true"
     :mini-variant.sync="navMini"
   >
     <nav-drawer-header title="导航" />

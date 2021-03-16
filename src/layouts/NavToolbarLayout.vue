@@ -3,7 +3,7 @@
     app
     :dense="toolbarDense"
     prominent
-    light
+    dark
     flat
     class="qk-toolbar"
     :clipped-left="drawerPosition !== 'right'"
@@ -30,7 +30,7 @@ import { mapGetters } from 'vuex';
 
 import FullScreenIcon from '@ui/widgets/FullScreenIcon.vue';
 import LogoutTipIcon from '@ui/widgets/LogoutTipIcon.vue';
-import toolbarImg from '@ui/assets/images/toolbar_bg.jpg';
+import toolbarImg from '@ui/assets/images/banner_dark.png';
 import NavToolbarInnerMenu from './navs/NavToolbarInnerMenu';
 
 export default {
