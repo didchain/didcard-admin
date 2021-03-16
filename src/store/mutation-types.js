@@ -1,0 +1,2 @@
+export const UPD_ACCESS_TOKEN = 'UPD_ACCESS_TOKEN';
+export const UPD_ACCESS_ROLE = 'UPD_ACCESS_ROLE';

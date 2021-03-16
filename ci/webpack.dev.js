@@ -48,7 +48,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       // Add children information
       children: false,
     },
-    http2: false,
+    http2: true,
   },
   plugins: [],
 });

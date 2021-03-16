@@ -5,13 +5,12 @@ import * as getters from './getters';
 export default {
   namespaced: true,
   state: {
-    ethAddr: '',
-    mainAddr: '',
+    navMenus: [],
   },
   actions,
   getters: {
-    mainAddr: (state) => state.mainAddr || '',
-    ethAddr: (state) => state.ethAddr || '',
+    navMenus: (state) => state.navMenus,
+    navEmpty: (state) => !state.navMenus || !state.navMenus.length,
     ...getters,
   },
   mutations,

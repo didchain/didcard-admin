@@ -1,0 +1,1 @@
+export const RELOAD_NAV_MENUS = 'RELOAD_NAV_MENUS';
