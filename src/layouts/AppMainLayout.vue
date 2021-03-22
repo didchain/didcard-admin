@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="px-0 py-0">
     <transition name="fade-transform" mode="out-in">
       <router-view />
     </transition>

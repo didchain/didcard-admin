@@ -39,7 +39,7 @@ const DID_2FA_MGR = [
         title: '权限条目',
         i18n: 'cardsManager',
         sort: 1,
-        icon: '',
+        icon: 'mdi-file-tree',
         roles: ['admin'],
       },
     ],

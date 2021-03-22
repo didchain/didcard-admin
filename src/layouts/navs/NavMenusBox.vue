@@ -16,7 +16,7 @@
       <v-list-group
         v-else-if="menu.children.length"
         :key="'_navg_' + idx"
-        no-action
+        :no-action="true"
         :value="idx === 0"
         :prepend-icon="menu.icon"
       >
@@ -29,9 +29,11 @@
           :inactive="$route.path === m.path"
           :to="m.path"
         >
-          <v-list-item-title class="ps-0">{{ m.title }}</v-list-item-title>
-          <v-list-item-icon v-if="!!m.icon">
-            <v-icon small>{{ m.icon }}</v-icon>
+          <v-list-item-title v-if="!navMini" class="ps-0">
+            {{ m.title }}
+          </v-list-item-title>
+          <v-list-item-icon v-if="!!m.icon" class="pe-0">
+            <v-icon size="14">{{ m.icon }}</v-icon>
           </v-list-item-icon>
         </v-list-item>
       </v-list-group>
@@ -48,6 +50,7 @@ export default {
   },
   computed: {
     ...mapGetters('auth', ['navMenus', 'navEmpty']),
+    ...mapGetters('ui', ['navMini']),
     curPath() {
       return this.$route.path;
     },
@@ -60,6 +63,10 @@ export default {
       if (path && path !== this.$route.path) {
         this.$router.push({ path });
       }
+    },
+    expandNavMenuHandle() {
+      const state = this.navMini;
+      this.$store.dispatch('ui/toggleNavMini', !state);
     },
   },
 };

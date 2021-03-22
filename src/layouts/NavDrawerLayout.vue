@@ -6,7 +6,7 @@
     :value="navDrawerShow"
     :right="navDrawerRight"
     :clipped="true"
-    :mini-variant.sync="navMini"
+    :mini-variant.sync="mini"
   >
     <nav-drawer-header title="导航" />
     <v-divider></v-divider>
@@ -30,6 +30,14 @@ export default {
   },
   computed: {
     ...mapGetters('ui', ['navDrawerRight', 'navDrawerShow', 'navMini']),
+    mini: {
+      get: function () {
+        return this.navMini;
+      },
+      set: function (val) {
+        this.$store.dispatch('ui/toggleNavMini', val);
+      },
+    },
   },
 };
 </script>

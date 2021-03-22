@@ -1,22 +1,18 @@
 <template>
-  <v-list dense light>
-    <v-list-item>
-      <v-list-item-avatar
-        class="qk-logo"
-        size="32"
-        @click.stop="toggleNavHandle"
-      >
-        <v-img :src="didIcon"></v-img>
-      </v-list-item-avatar>
-      <v-list-item-title v-if="!!title">
-        {{ title }}
-      </v-list-item-title>
-      <v-spacer></v-spacer>
-      <v-btn icon @click.stop="minifyNavHandle">
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-    </v-list-item>
-  </v-list>
+  <!-- <v-list dense light> -->
+  <v-list-item dense>
+    <v-list-item-avatar class="qk-logo" size="32" @click.stop="toggleNavHandle">
+      <v-img :src="didIcon"></v-img>
+    </v-list-item-avatar>
+    <v-list-item-title v-if="!!title">
+      {{ title }}
+    </v-list-item-title>
+    <v-spacer></v-spacer>
+    <v-btn icon @click.stop="minifyNavHandle">
+      <v-icon>mdi-chevron-left</v-icon>
+    </v-btn>
+  </v-list-item>
+  <!-- </v-list> -->
 </template>
 
 <script>
