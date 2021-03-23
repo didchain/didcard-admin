@@ -77,7 +77,7 @@ export default {
       try {
         const data = await this.$store.dispatch('login');
         console.log(data);
-        // await this.$router.replace({ path: '/' });
+        if (data) await this.$router.replace({ path: '/' });
       } catch (e) {
         console.log(e);
       }

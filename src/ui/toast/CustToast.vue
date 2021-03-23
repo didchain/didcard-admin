@@ -17,10 +17,11 @@
 </template>
 
 <script>
-import infoIcon from '@/ui/assets/svgs/info_circle.svg';
-import successIcon from '@/ui/assets/svgs/success.svg';
-import failIcon from '@/ui/assets/svgs/fail_circle.svg';
-import warnIcon from '@/ui/assets/svgs/warn_circle.svg';
+import infoIcon from '@/ui/assets/svgs/info.svg';
+import successIcon from '@/ui/assets/svgs/success_green.svg';
+import failIcon from '@/ui/assets/svgs/failure.svg';
+import errorIcon from '@/ui/assets/svgs/error.svg';
+import warnIcon from '@/ui/assets/svgs/warning.svg';
 
 export default {
   name: 'CustToast',
@@ -42,6 +43,7 @@ export default {
         successIcon,
         failIcon,
         warnIcon,
+        errorIcon,
       },
     };
   },
@@ -59,7 +61,8 @@ export default {
       }
 
       if (this.typ === 'success') return successIcon;
-      if (this.typ === 'error') return failIcon;
+      if (this.typ === 'error') return errorIcon;
+      if (this.typ === 'fail') return failIcon;
       return infoIcon;
     },
   },
@@ -121,10 +124,10 @@ export default {
 }
 
 .icon img {
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   margin-top: 3px;
-  margin-right: 4px;
+  margin-right: 12px;
 }
 .cust-toast > div {
   display: flex;
@@ -138,33 +141,36 @@ export default {
 }
 
 div.toast-content {
+  /* color: rgba(0, 0, 0, 0.87); */
+  word-break: break-all;
   flex: 1 1 auto;
   justify-self: start;
   align-items: center;
 }
 
 div.toast-info {
-  color: white;
-  background: linear-gradient(217deg, #7917d3 0%, #0362c3 100%);
+  color: #ffffff;
+  background: rgba(3, 155, 229, 0.85);
+  /* background: linear-gradient(217deg, #7917d3 0%, #0362c3 100%); */
 }
 
 .toast-success {
-  color: rgba(0, 202, 155, 1);
-  background: rgba(0, 202, 155, 0.3);
+  color: #ffffff;
+  background: rgba(0, 202, 155, 0.75);
 }
 
 .toast-warn {
-  color: #e6a23c;
-  background: rgb(250, 236, 216);
+  color: #ff6f26;
+  background: rgba(250, 236, 216, 0.85);
 }
 
 .toast-error {
   color: #f56c6c;
-  background: rgb(253, 226, 226);
+  background: rgba(255, 255, 255, 0.98);
 }
 
-.toast-tips {
+.toast-fail {
   color: #515151;
-  background: rgb(246, 246, 246);
+  background: rgba(246, 246, 246, 0.95);
 }
 </style>

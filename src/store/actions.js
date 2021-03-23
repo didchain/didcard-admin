@@ -9,7 +9,10 @@ export const login = async ({ dispatch, commit }) => {
   const ethData = await loginMetamask();
   const { chainId, accounts = [] } = ethData;
   const selectedAddress = accounts.length ? accounts[0] : '';
-  await dispatch('metamask/loginUpdateState', { chainId, selectedAddress });
+  await dispatch('metamask/loginUpdateState', {
+    chainId: parseInt(chainId),
+    selectedAddress,
+  });
 
   console.log('>loginUpdateState>>>>>>>>>>>>>>', ethData);
   /**
@@ -21,7 +24,13 @@ export const login = async ({ dispatch, commit }) => {
   const role = 'admin';
   await dispatch('auth/loadNavMenus', role);
   commit(types.UPD_ACCESS_ROLE, role);
-  commit(types.UPD_ACCESS_TOKEN, '123');
+  commit(types.UPD_ACCESS_TOKEN, verifyData);
+
+  return Promise.resolve({
+    accessToken: verifyData,
+    role: role,
+    selectedAddress,
+  });
 };
 
 export const logout = async ({ commit }) => {

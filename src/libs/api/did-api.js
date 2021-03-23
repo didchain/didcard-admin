@@ -44,8 +44,9 @@ export const verifyToken = async (sig, accessToken) => {
 
   const response = await axiosProxy.post(DID_APIS.verifyToken, paramsData);
   const { result_code, message, access_token } = response;
-  if (result_code === 1)
+  if (result_code === 1 || result_code === 2)
     throw new ApiError('token 校验未通过', TOKEN_VERIFY_FAIL, message);
+
   if (result_code === 3)
     throw new ApiError('参数格式不正确', ILLEGAL_PARAMS_FORMAT, {
       result_code,

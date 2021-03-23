@@ -4,7 +4,7 @@ import router from './router';
 
 import vuetify from './ui/vuetify';
 
-// import Toast from './ui/toast/index';
+import Toast from './ui/toast/index';
 
 import store from './store';
 
@@ -16,7 +16,7 @@ import store from './store';
 
 Vue.config.productionTip = false;
 
-// Vue.use(Toast);
+Vue.use(Toast);
 
 //
 store.dispatch('metamask/checkMetaMaskEnv');
