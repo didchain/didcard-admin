@@ -80,6 +80,7 @@ export default {
         if (data) await this.$router.replace({ path: '/' });
       } catch (e) {
         console.log(e);
+        this.$toast(e.message, 'warn', 8000);
       }
     },
   },
