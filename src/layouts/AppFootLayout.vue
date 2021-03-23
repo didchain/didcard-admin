@@ -1,6 +1,9 @@
 <template>
   <v-footer app :dense="toolbarDense">
-    <v-container class="px-0 py-0 qk-footer">Footer</v-container>
+    <div class="qk-footer">
+      <div class="mid-message-wrapper">欢迎使用</div>
+      <div class="right-logo-wrapper">访问量</div>
+    </div>
   </v-footer>
 </template>
 
@@ -18,5 +21,16 @@ export default {
 </script>
 <style lang="sass">
 .qk-footer
+  flex: 1 1 100%
   color: $footerColor
+  display: flex
+  flex-direction: row
+  .mid-message-wrapper
+    flex: 1 1 auto
+    text-align: center
+  .right-logo-wrapper
+    flex: 0 0 220px
+    color: blue
+    text-align: right
 </style>
+<style></style>

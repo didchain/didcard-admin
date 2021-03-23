@@ -10,6 +10,7 @@ import mutations from './mutations';
 import acc from './modules/acc';
 import auth from './modules/auth';
 import ui from './modules/ui';
+import metamask from './modules/metamask';
 
 Vue.use(Vuex);
 
@@ -17,6 +18,7 @@ const store = new Vuex.Store({
   modules: {
     acc,
     auth,
+    metamask,
     ui,
   },
   state: {

@@ -1,13 +1,23 @@
-import detectEthereumProvider from '@metamask/detect-provider';
-
-import { validMetaMaskEnv } from '@lib/metamask/utils.js';
 import UIError from '@lib/UIError';
+import { loginMetamask } from '@lib/metamask';
+import { getRandom, verifyToken } from '@/libs/api/did-api';
+import { signToken } from '@/libs/web3js/sign.js';
 import * as types from './mutation-types';
 
 export const login = async ({ dispatch, commit }) => {
-  if (!validMetaMaskEnv())
-    throw new UIError('需要MetaMask浏览器插件', 'NO_METAMASK', 0);
+  const random = await getRandom();
+  const ethData = await loginMetamask();
+  const { chainId, accounts = [] } = ethData;
+  const selectedAddress = accounts.length ? accounts[0] : '';
+  await dispatch('metamask/loginUpdateState', { chainId, selectedAddress });
 
+  console.log('>loginUpdateState>>>>>>>>>>>>>>', ethData);
+  /**
+   * 1 signature : sigData[sig,token,address]
+   */
+  const sigData = await signToken(random, selectedAddress);
+  const verifyData = await verifyToken(sigData.sig, random);
+  console.log('>verifyData>>>>>>>>>>>>>>', verifyData);
   const role = 'admin';
   await dispatch('auth/loadNavMenus', role);
   commit(types.UPD_ACCESS_ROLE, role);

@@ -18,6 +18,9 @@ Vue.config.productionTip = false;
 
 // Vue.use(Toast);
 
+//
+store.dispatch('metamask/checkMetaMaskEnv');
+
 const admin = new Vue({
   router,
   store,
