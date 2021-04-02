@@ -7,6 +7,7 @@ export default {
   state: {
     ethAddr: '',
     mainAddr: '',
+    username: '',
   },
   actions,
   getters: {

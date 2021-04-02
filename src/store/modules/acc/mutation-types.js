@@ -1,1 +1,1 @@
-export default {};
+export const SET_LOGIN_USERNAME = 'SET_LOGIN_USERNAME';

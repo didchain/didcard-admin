@@ -28,12 +28,12 @@ router.beforeResolve(async (to, from, next) => {
     // console.log('>>>>', from, accessData, await Store.getters['auth/navMenus']);
     if (needLogin) {
       //TODO
-      // next({ path: '/signin' });
+      next({ path: '/signin' });
       // if (!(await Store.getters['auth/navMenus'])) {
       await Store.dispatch('auth/loadNavMenus', 'admin');
       // }
 
-      next();
+      // next();
     } else {
       next();
     }
