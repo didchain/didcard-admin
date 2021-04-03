@@ -7,7 +7,10 @@
       </div>
 
       <div class="sign-form-warp">
-        <div v-if="!metamaskEnabled" class="metamask-error-box">
+        <div
+          v-if="!metamaskEnabled && !ctrl.qrcodeLogin"
+          class="metamask-error-box"
+        >
           <div class="tip-title">
             <h4>当前系统登录不可用,请先解决以下问题：</h4>
           </div>
@@ -35,53 +38,49 @@
           >
             MetaMask Sign In
           </v-btn>
-
-          <div class="form-footer">
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              color="light-blue darken-1"
-              type="primary"
-              class="mt-4"
-              @click="changedQrcodeLoginHandle"
-            >
-              使用手机扫码登录
-            </v-btn>
-          </div>
         </v-form>
         <v-form
           v-if="ctrl.qrcodeLogin"
           ref="qrcoeSigninForm"
           class="sign-from login-qr"
         >
-          <div class="qrcode-img-wrap">
-            <!-- <vue-code ref="qrcodeBox" :value="qrcodeText"></vue-code> -->
-            <!-- <div id="qrcodeBox" class="qrcode-box"></div> -->
+          <div class="qrcode-img-wrap" style="height: 100%">
             <img :src="qrDataUrl" alt="" class="qrcode-box" />
           </div>
-          <div class="btn-grounps-wrap">
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              color="light-blue darken-1"
-              type="primary"
-              class="mt-4"
-              @click="refreshQrcodeHandle"
-            >
-              刷新二维码
-            </v-btn>
-
-            <v-btn
-              text
-              color="light-blue darken-1"
-              type="primary"
-              class="mt-4"
-              @click="changedMetaMaskLoginHandle"
-            >
-              使用MetaMask插件登录
-            </v-btn>
-          </div>
         </v-form>
+        <div class="form-footer">
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="ctrl.qrcodeLogin"
+            text
+            color="light-blue darken-1"
+            type="primary"
+            class="mt-4"
+            @click="refreshQrcodeHandle"
+          >
+            刷新二维码
+          </v-btn>
+          <v-btn
+            v-if="!ctrl.qrcodeLogin"
+            text
+            color="light-blue darken-1"
+            type="primary"
+            class="mt-4"
+            @click="changedQrcodeLoginHandle"
+          >
+            使用手机扫码登录
+          </v-btn>
+          <v-btn
+            v-if="ctrl.qrcodeLogin"
+            text
+            color="light-blue darken-1"
+            type="primary"
+            class="mt-4"
+            @click="changedMetaMaskLoginHandle"
+          >
+            使用MetaMask插件登录
+          </v-btn>
+        </div>
       </div>
     </div>
   </v-container>
@@ -255,6 +254,8 @@ export default {
 }
 .sign-form-warp form {
   width: 95%;
+  align-items: center;
+  flex: 1 1 auto;
 }
 
 .wallet-address {
@@ -268,14 +269,17 @@ export default {
   font-size: 0.95rem;
 }
 
-.sign-from .login-qr {
+.qrcode-img-wrap {
   display: flex;
+  flex: 1 1 auto;
   justify-content: center;
   align-items: center;
 }
 
-.qrcode-img-wrap {
+.sign-from .login-qr {
   display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
   justify-content: center;
   align-items: center;
 }
@@ -288,6 +292,7 @@ export default {
 }
 
 .form-footer {
+  width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: right;

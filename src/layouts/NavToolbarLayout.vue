@@ -13,6 +13,7 @@
       <div class="title-inner">{{ appTitle }}</div>
     </v-app-bar-title>
     <v-spacer />
+    <home-tip-icon />
     <full-screen-icon />
     <logout-tip-icon />
     <template v-slot:img="{ props }">
@@ -30,12 +31,14 @@ import { mapGetters } from 'vuex';
 
 import FullScreenIcon from '@ui/widgets/FullScreenIcon.vue';
 import LogoutTipIcon from '@ui/widgets/LogoutTipIcon.vue';
+import HomeTipIcon from '@ui/widgets/HomeTipIcon.vue';
 import toolbarImg from '@ui/assets/images/banner_dark.png';
 import NavToolbarInnerMenu from './navs/NavToolbarInnerMenu';
 
 export default {
   name: 'NavToolbarLayout',
   components: {
+    HomeTipIcon,
     FullScreenIcon,
     NavToolbarInnerMenu,
     LogoutTipIcon,
