@@ -2,53 +2,43 @@
   <v-container class="page-container">
     <div class="sigin-box-warp">
       <div class="left-pic">
-        <!-- <img :src="leftIcon" alt="" /> -->
         <v-img :src="leftIcon"></v-img>
       </div>
-
-      <div class="sign-form-warp">
-        <div
-          v-if="!metamaskEnabled && !ctrl.qrcodeLogin"
-          class="metamask-error-box"
-        >
-          <div class="tip-title">
-            <h4>当前系统登录不可用,请先解决以下问题：</h4>
-          </div>
-          <div class="error-msg">{{ getErrMessage }}</div>
-        </div>
-        <v-form
-          v-if="metamaskEnabled && !ctrl.qrcodeLogin"
-          ref="signinForm"
-          class="sign-from"
-        >
-          <div class="login py-4">
-            <label>登录:</label>
-            <span>{{ network.name }}</span>
-          </div>
-          <div class="wallet-address py-4 px-0">
-            {{ selectedAddress }}
-          </div>
-          <v-btn
-            rounded
-            block
-            color="light-blue darken-1"
-            type="primary"
-            :disabled="!metamaskEnabled"
-            @click="signinHandler"
+      <div class="right-container">
+        <div class="margin-box" style="height: 10vh"></div>
+        <div class="form-box">
+          <v-form
+            v-if="!ctrl.qrcodeLogin"
+            ref="extensionForm"
+            class="login-form ext-form"
           >
-            MetaMask Sign In
-          </v-btn>
-        </v-form>
-        <v-form
-          v-if="ctrl.qrcodeLogin"
-          ref="qrcoeSigninForm"
-          class="sign-from login-qr"
-        >
-          <div class="qrcode-img-wrap" style="height: 100%">
-            <img :src="qrDataUrl" alt="" class="qrcode-box" />
-          </div>
-        </v-form>
-        <div class="form-footer">
+            <div class="login py-4">
+              <label>当前区块链网络:</label>
+              <span>{{ network.name }}</span>
+            </div>
+            <div class="wallet-address py-4 px-0">
+              {{ selectedAddress }}
+            </div>
+            <v-btn
+              rounded
+              block
+              color="light-blue darken-1"
+              type="primary"
+              :disabled="!metamaskEnabled"
+              @click="signinHandler"
+            >
+              MetaMask 插件登录
+            </v-btn>
+          </v-form>
+
+          <v-form v-if="ctrl.qrcodeLogin" class="login-form">
+            <div class="qrcode-img-wrap">
+              <img :src="qrDataUrl" alt="" class="qrcode-box" />
+              <div style="font-size: 0.85rem">手机APP扫此二维码</div>
+            </div>
+          </v-form>
+        </div>
+        <div class="footer-box">
           <v-spacer></v-spacer>
           <v-btn
             v-if="ctrl.qrcodeLogin"
@@ -81,6 +71,15 @@
             使用MetaMask插件登录
           </v-btn>
         </div>
+        <div class="error-box">
+          <div v-if="!metamaskEnabled" class="tip-title">
+            <h4>当前系统登录不可用,请先解决以下问题：</h4>
+          </div>
+          <div v-if="!metamaskEnabled" class="error-msg">
+            {{ getErrMessage }}
+          </div>
+        </div>
+        <div class="margin-box" style="height: 10vh"></div>
       </div>
     </div>
   </v-container>
@@ -242,65 +241,66 @@ export default {
   will-change: transform;
   transform: perspective(300px) rotateX(0deg) rotateY(0deg);
 }
-/* .left-pic img {
-  max-width: 100%;
-} */
-.sign-form-warp {
+
+.right-container {
   display: flex;
   flex-direction: column;
-  flex: 0 1 55%;
-  justify-content: center;
-  align-items: center;
-}
-.sign-form-warp form {
-  width: 95%;
-  align-items: center;
-  flex: 1 1 auto;
-}
-
-.wallet-address {
-  text-align: center;
-  word-break: break-all;
-}
-
-.metamask-error-box .error-msg {
-  color: red;
-  margin-top: 1rem;
-  font-size: 0.95rem;
-}
-
-.qrcode-img-wrap {
-  display: flex;
   flex: 1 1 auto;
   justify-content: center;
   align-items: center;
 }
 
-.sign-from .login-qr {
+.right-container .form-box {
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex: 1 1 auto;
   justify-content: center;
   align-items: center;
 }
 
-.btn-grounps-wrap {
+.form-box form.login-form {
+  width: 80%;
+  flex: 0 1 auto;
+  justify-content: left;
+}
+
+.login-form .qrcode-img-wrap {
+  width: 100%;
   display: flex;
-  flex-direction: row;
-  justify-content: right;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
-.form-footer {
+.qrcode-img-wrap > img {
+  width: 256px;
+  height: 256px;
+}
+
+.right-container .footer-box {
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: right;
-  align-items: center;
 }
 
-.qrcode-box {
-  width: 256px;
-  height: 256px;
+.right-container .footer-box :last-child {
+  margin-right: 24px;
+}
+
+.right-container .error-box {
+  width: 100%;
+  flex: 0 0 auto;
+  /* border: 1px solid #dff990; */
+  text-align: center;
+  word-break: break-all;
+  padding: 12px 0px;
+}
+
+.error-box .tip-title,
+.error-box .error-msg {
+  font-size: 0.85rem;
+  word-break: break-all;
+  color: red;
 }
 </style>
