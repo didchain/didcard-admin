@@ -29,25 +29,30 @@ export const login = async ({ dispatch, commit }) => {
   commit(types.UPD_ACCESS_TOKEN, verifyData);
 
   return Promise.resolve({
-    accessToken: verifyData,
-    role: role,
-    selectedAddress,
+    status: 1,
+    message: 'success',
+    data: {
+      accessToken: verifyData,
+      role: role,
+      selectedAddress,
+    },
   });
 };
 
-export const loginByQrcode = async (
-  { dispatch, commit },
-  { did, accessToken, username, role },
-) => {
+export const siginSaveState = async ({ dispatch, commit }, authState) => {
+  const { did, username, role, accessToken } = authState;
   await dispatch('acc/setUsername', username);
   await dispatch('auth/loadNavMenus', role);
   commit(types.UPD_ACCESS_ROLE, role);
   commit(types.UPD_ACCESS_TOKEN, accessToken);
-
   return Promise.resolve({
-    accessToken: verifyData,
-    role: role,
-    selectedAddress,
+    status: 1,
+    message: 'success',
+    data: {
+      role,
+      did,
+      username,
+    },
   });
 };
 

@@ -8,7 +8,7 @@
           <!-- <img :src="logoIcon" alt="" width="300" height="300" /> -->
         </div>
         <div class="did-login-sys my-5">
-          <h2>XX系统</h2>
+          <h2>XX系统登录</h2>
         </div>
       </div>
       <div class="right-container">
@@ -208,7 +208,9 @@ export default {
       }, 1000);
     },
     clearQrcodeTimer() {
-      this.qrcodeTimer && clearInterval(this.qrcodeTimer);
+      (this.timeCounter = -1) &&
+        this.qrcodeTimer &&
+        clearInterval(this.qrcodeTimer);
     },
     startCheckTimer() {
       if (!this.checkTimer) {
@@ -216,11 +218,30 @@ export default {
         this.checkTimer = setInterval(async () => {
           that.mocker = that.mocker + 1;
           // TODO api request
-
-          if (that.mocker > 30) {
+          console.log('checkTimer log:', that.mocker);
+          if (that.mocker > 20) {
+            console.log('>>>>>>that.mocker >>>>>>>>>>>', that.mocker);
+            clearInterval(that.checkTimer);
+            // const res = await that.$store.dispatch('login2Fa', data);
+            // if (res) await that.$router.replace({ path: '/' });
+            const authState = {
+              did: '9197735hsgd',
+              accessToken: '12345646',
+              username: 'scanUser',
+              role: 'admin',
+            };
+            const saveResp = await this.$store.dispatch(
+              'siginSaveState',
+              authState,
+            );
+            if (saveResp) await that.$router.replace({ path: '/' });
+            // await that.routerAuthHome(data);
           }
         }, 1000);
       }
+    },
+    clearCheckTimer() {
+      this.checkTimer && clearInterval(this.checkTimer);
     },
     async signinHandler() {
       try {
@@ -234,6 +255,7 @@ export default {
     },
     async changedQrcodeLoginHandle() {
       this.startQrcodeTimer();
+      this.startCheckTimer();
       this.$store.dispatch('ui/setSigninMode', SCAN_SIGIN_MODE);
     },
     changedMetaMaskLoginHandle() {
@@ -257,6 +279,7 @@ export default {
       let data = await QRCode.toDataURL(text);
       // console.log('data>>>>>', data);
       this.startQrcodeTimer();
+      this.startCheckTimer();
       this.dataUrl = data;
     },
     generateQrcode(text) {
@@ -268,8 +291,21 @@ export default {
       };
       let qr = new QRCode('qrcodeBox', opts);
     },
-    async routerAuthHome({ did = '', role, username }) {
-      await this.$store.dispatch('');
+    /**
+     * @deprecated
+     * 处理登录store & route
+     */
+    async routerAuthHome({ did = '', accessToken, role, username }) {
+      const authState = {
+        did,
+        accessToken,
+        username,
+        role,
+      };
+      const saveResp = await this.$store.dispatch('siginSaveState', authState);
+      if (saveResp) {
+        await this.$router.replace({ path: '/' });
+      }
     },
   },
 };
@@ -366,7 +402,7 @@ export default {
   flex-direction: row;
 }
 
-.right-container .footer-box :last-child {
+.right-container .footer-box button:last-child {
   margin-right: 24px;
 }
 
