@@ -25,11 +25,12 @@ const store = new Vuex.Store({
     accessToken: null,
     accessRole: null,
     locale: DEFAULT_LOCALE,
-    appTitle: APP_TITLE_NAME,
+    appTitle: 'XXX系统' || APP_TITLE_NAME,
   },
   actions,
   getters: {
     accessToken: (state) => state.accessToken,
+    accessRole: (state) => state.accessRole,
     appTitle: (state) => state.appTitle,
     locale: (state) => state.locale,
     ...getters,

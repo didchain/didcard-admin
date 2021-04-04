@@ -6,4 +6,7 @@ export default {
   [types.UPD_NAV_DRAWER_MINI]: (state, navMini) => {
     state.navMini = navMini;
   },
+  [types.UPD_SIGIN_MODE](state, mode) {
+    state.siginMode = mode;
+  },
 };

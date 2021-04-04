@@ -12,7 +12,7 @@ const DID_CARDS_MGR = [
         i18n: 'cardsManager',
         sort: 1,
         icon: 'mdi-credit-card-scan-outline',
-        roles: ['admin', 'user'],
+        roles: ['admin'],
       },
       {
         path: '/cards/authorized',
@@ -53,6 +53,7 @@ const DEMO = [
     icon: 'mdi-vuetify',
     sort: 3,
     i18n: 'demo',
+    roles: ['admin', 'user'],
   },
 ];
 
@@ -83,7 +84,7 @@ function compareMenu(a, b) {
 export const getAuthNavMenus = (role = 'user') => {
   let all = JSON.parse(JSON.stringify(sortMenus(All_MENUS)));
   // filter sub
-  all.map((g) => {
+  all = all.map((g) => {
     if (g.children) {
       g.children = g.children.filter((m) => m.roles && m.roles.includes(role));
     }

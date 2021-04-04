@@ -30,7 +30,7 @@ router.beforeResolve(async (to, from, next) => {
       //TODO
       next({ path: '/signin' });
       // if (!(await Store.getters['auth/navMenus'])) {
-      await Store.dispatch('auth/loadNavMenus', 'admin');
+      await Store.dispatch('auth/loadNavMenus', 'users');
       // }
 
       // next();

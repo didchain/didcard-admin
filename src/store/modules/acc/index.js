@@ -11,6 +11,7 @@ export default {
   },
   actions,
   getters: {
+    username: (state) => state.username,
     mainAddr: (state) => state.mainAddr || '',
     ethAddr: (state) => state.ethAddr || '',
     ...getters,

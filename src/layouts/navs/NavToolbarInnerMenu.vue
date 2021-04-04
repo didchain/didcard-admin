@@ -2,9 +2,9 @@
   <v-container fluid class="qk-menus-toolbar px-0 py-0">
     <div class="u-box">
       <label for="username">当前登录用户:</label>
-      <span class="username">adhhds</span>
+      <span class="username">{{ username }}</span>
       <label for="role">[角色:</label>
-      <span class="role">admin]</span>
+      <span class="role">{{ accessRole }}]</span>
     </div>
     <v-spacer></v-spacer>
     <!-- <v-icon>mdi-home</v-icon> -->
@@ -12,8 +12,13 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   name: 'NavToolbarInnerMenu',
+  computed: {
+    ...mapGetters(['accessRole']),
+    ...mapGetters('acc', ['username']),
+  },
 };
 </script>
 <style>

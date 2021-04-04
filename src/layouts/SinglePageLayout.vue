@@ -28,10 +28,10 @@ export default {
   justify-content: center;
   align-items: center;
   padding: 15px;
-  background: #9053c7;
-  background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
-  background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
-  background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
-  background: linear-gradient(-135deg, #c850c0, #4158d0);
+  background: rgba(87, 127, 76, 1);
+  background: -webkit-linear-gradient(-135deg, #fff, #96d3c1);
+  background: -o-linear-gradient(-135deg, #fff, #96d3c1);
+  background: -moz-linear-gradient(-135deg, #fff, #96d3c1);
+  background: linear-gradient(-135deg, #fff, #96d3c1);
 }
 </style>

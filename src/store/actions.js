@@ -21,10 +21,28 @@ export const login = async ({ dispatch, commit }) => {
   const sigData = await signToken(random, selectedAddress);
   const verifyData = await verifyToken(sigData.sig, random);
   console.log('>verifyData>>>>>>>>>>>>>>', verifyData);
-  const role = 'admin';
+  const username = 'mockAdmin';
+  const role = 'user';
+  await dispatch('acc/setUsername', username);
   await dispatch('auth/loadNavMenus', role);
   commit(types.UPD_ACCESS_ROLE, role);
   commit(types.UPD_ACCESS_TOKEN, verifyData);
+
+  return Promise.resolve({
+    accessToken: verifyData,
+    role: role,
+    selectedAddress,
+  });
+};
+
+export const loginByQrcode = async (
+  { dispatch, commit },
+  { did, accessToken, username, role },
+) => {
+  await dispatch('acc/setUsername', username);
+  await dispatch('auth/loadNavMenus', role);
+  commit(types.UPD_ACCESS_ROLE, role);
+  commit(types.UPD_ACCESS_TOKEN, accessToken);
 
   return Promise.resolve({
     accessToken: verifyData,

@@ -2,13 +2,24 @@
   <v-container class="page-container">
     <div class="sigin-box-warp">
       <div class="left-pic">
-        <v-img :src="leftIcon"></v-img>
+        <!-- <v-img :src="leftIcon"></v-img> -->
+        <div class="logo-box">
+          <v-img :src="logoIcon" max-height="250" max-width="250"></v-img>
+          <!-- <img :src="logoIcon" alt="" width="300" height="300" /> -->
+        </div>
+        <div class="did-login-sys my-5">
+          <h2>XX系统</h2>
+        </div>
       </div>
       <div class="right-container">
-        <div class="margin-box" style="height: 10vh"></div>
+        <div class="margin-box" style="height: 10vh">
+          <div v-if="isScanSiginMode" class="remaining-time">
+            二维码将在 {{ lefttimes }} 秒后失效.
+          </div>
+        </div>
         <div class="form-box">
           <v-form
-            v-if="!ctrl.qrcodeLogin"
+            v-if="!isScanSiginMode"
             ref="extensionForm"
             class="login-form ext-form"
           >
@@ -31,17 +42,20 @@
             </v-btn>
           </v-form>
 
-          <v-form v-if="ctrl.qrcodeLogin" class="login-form">
+          <v-form v-if="isScanSiginMode" class="login-form">
             <div class="qrcode-img-wrap">
               <img :src="qrDataUrl" alt="" class="qrcode-box" />
-              <div style="font-size: 0.85rem">手机APP扫此二维码</div>
+              <div style="font-size: 0.75rem">手机APP扫此二维码登录</div>
+              <div v-if="qrinvalid" class="invalid-mask">
+                <div class="content">二维码失效,请刷新</div>
+              </div>
             </div>
           </v-form>
         </div>
         <div class="footer-box">
           <v-spacer></v-spacer>
           <v-btn
-            v-if="ctrl.qrcodeLogin"
+            v-if="isScanSiginMode"
             text
             color="light-blue darken-1"
             type="primary"
@@ -51,7 +65,7 @@
             刷新二维码
           </v-btn>
           <v-btn
-            v-if="!ctrl.qrcodeLogin"
+            v-if="!isScanSiginMode"
             text
             color="light-blue darken-1"
             type="primary"
@@ -61,7 +75,7 @@
             使用手机扫码登录
           </v-btn>
           <v-btn
-            v-if="ctrl.qrcodeLogin"
+            v-if="isScanSiginMode"
             text
             color="light-blue darken-1"
             type="primary"
@@ -88,20 +102,41 @@
 <script>
 import { mapGetters } from 'vuex';
 import pcIcon from '@ui/assets/icons/sign-icon.png';
+import logoIcon from '@ui/assets/icons/logo_3rd.png';
 import demoQrcode from '@ui/assets/images/qrcode.png';
+import {
+  SCAN_SIGIN_MODE,
+  METAMASK_SIGIN_MODE,
+} from '@/store/modules/ui/mod-cnsts.js';
 
 import QRCode from 'qrcode';
+
+const MAX_SECOND = 300;
+const timerEnabled = true;
+const acc = {
+  mainAddress: '0xb2a3542b978119ecff55ed9b6e4af354a8a07a16',
+  subAddress: 'BP8tALc4Pr9Dt1AsWd3kMkqN2bbQL8JDibB7mwKrzDBUfK',
+  subCipher:
+    '2Z5CXECU24THRHPMvSPzz6RYiZzRgWgJMogy8f7oxWzpLUK38S8aaPAL4A2ixK9X2YqBkj3js9gMNqyPodUvggWsynKtBxijnavCevJWQuevDv',
+  version: 1,
+};
 
 export default {
   name: 'Signin',
   components: {},
   data() {
     return {
+      logoIcon,
       demoQrcode,
       qrcodeText: 'FUTYUgb8/qdmslAmNBfH9/MvII5fzCiCpgTSesVT/6YDRvlV',
       dataUrl: '',
       leftIcon: pcIcon,
-      mainAddr: '0x2f94432422ce1C99FaA99171a2a3effb570319B0',
+      checkTimer: null,
+      qrcodeTimer: null,
+      checkLocked: false,
+      timeCounter: -1,
+      mocker: 1,
+      mainAddr: '0x2f94432422ce1C99FaA99171ada3effb570319B0',
       ctrl: {
         qrcodeLogin: true,
       },
@@ -109,6 +144,7 @@ export default {
   },
   computed: {
     ...mapGetters('acc', ['ethAddr']),
+    ...mapGetters('ui', ['isScanSiginMode']),
     ...mapGetters('metamask', [
       'selectedAddress',
       'network',
@@ -129,16 +165,63 @@ export default {
 
       return msgs.length > 0 ? msgs.join(',') : '';
     },
+    qrinvalid() {
+      let invalid = false;
+      if (!timerEnabled) return false;
+      if (!this.isScanSiginMode) return false;
+
+      return invalid;
+    },
     qrDataUrl() {
       let text = this.dataUrl;
       return text;
+    },
+    lefttimes() {
+      if (this.timeCounter > MAX_SECOND || this.timeCounter < 0) return 0;
+      return this.timeCounter;
     },
   },
   watch: {},
   mounted() {
     this.refreshQrcodeHandle();
   },
+  beforeDestroy() {
+    this.destoryTimers();
+  },
   methods: {
+    destoryTimers() {
+      this.checkTimer && clearInterval(this.checkTimer);
+      (this.timeCounter = -1) &&
+        this.qrcodeTimer &&
+        clearInterval(this.qrcodeTimer);
+    },
+    startQrcodeTimer() {
+      this.qrcodeTimer && this.clearQrcodeTimer();
+      const that = this;
+      this.timeCounter = MAX_SECOND;
+      this.qrcodeTimer = setInterval(() => {
+        that.timeCounter = that.timeCounter - 1;
+        console.log('>>>>>>>>>>>>>>>>>', that.timeCounter);
+        if (that.timeCounter <= 0) {
+          that.clearQrcodeTimer();
+        }
+      }, 1000);
+    },
+    clearQrcodeTimer() {
+      this.qrcodeTimer && clearInterval(this.qrcodeTimer);
+    },
+    startCheckTimer() {
+      if (!this.checkTimer) {
+        const that = this;
+        this.checkTimer = setInterval(async () => {
+          that.mocker = that.mocker + 1;
+          // TODO api request
+
+          if (that.mocker > 30) {
+          }
+        }, 1000);
+      }
+    },
     async signinHandler() {
       try {
         const data = await this.$store.dispatch('login');
@@ -150,36 +233,15 @@ export default {
       }
     },
     async changedQrcodeLoginHandle() {
-      this.ctrl.qrcodeLogin = true;
+      this.startQrcodeTimer();
+      this.$store.dispatch('ui/setSigninMode', SCAN_SIGIN_MODE);
     },
     changedMetaMaskLoginHandle() {
-      this.ctrl.qrcodeLogin = false;
+      // this.ctrl.qrcodeLogin = false;
+      this.destoryTimers();
+      this.$store.dispatch('ui/setSigninMode', METAMASK_SIGIN_MODE);
     },
     async refreshQrcodeHandle() {
-      const acc = {
-        crypto: {
-          cipher: 'aes-128-ctr',
-          cipherparams: { iv: 'fc39147a23bcd89b0497edbede9ddd5d' },
-          ciphertext:
-            '3daa6f35d44f3134cb536b83c90151cfc35929f13556ab3164a4dad5034594c0',
-          kdf: 'scrypt',
-          kdfparams: {
-            dklen: 32,
-            n: 262144,
-            p: 1,
-            r: 8,
-            salt:
-              '4aee47dcae2d89c7b29536d802062c776e43fcf6706dfe12cf1f9e6f9e41456c',
-          },
-          mac:
-            'fb857198146846e7ce03f7ad41a5e3939a9c7f03d08fc0b3509022b6743a553f',
-        },
-        mainAddress: '0xb2a3542b978119ecff55ed9b6e4af354a8a07a16',
-        subAddress: 'BP8tALc4Pr9Dt1AsWd3kMkqN2bbQL8JDibB7mwKrzDBUfK',
-        subCipher:
-          '2Z5CXECU24THRHPMvSPzz6RYiZzRgWgJMogy8f7oxWzpLUK38S8aaPAL4A2ixK9X2YqBkj3js9gMNqyPodUvggWsynKtBxijnavCevJWQuevDv',
-        version: 1,
-      };
       const text = JSON.stringify(acc) + new Date().getTime();
 
       this.qrcodeText = text;
@@ -191,8 +253,10 @@ export default {
           light: '#FFBF60FF',
         },
       };
+      this.clearQrcodeTimer();
       let data = await QRCode.toDataURL(text);
-      console.log('data>>>>>', data);
+      // console.log('data>>>>>', data);
+      this.startQrcodeTimer();
       this.dataUrl = data;
     },
     generateQrcode(text) {
@@ -204,7 +268,9 @@ export default {
       };
       let qr = new QRCode('qrcodeBox', opts);
     },
-    createQrcode(text) {},
+    async routerAuthHome({ did = '', role, username }) {
+      await this.$store.dispatch('');
+    },
   },
 };
 </script>
@@ -235,6 +301,7 @@ export default {
 
 .left-pic {
   display: flex;
+  flex-direction: column;
   flex: 0 0 35%;
   justify-content: center;
   align-items: center;
@@ -248,6 +315,21 @@ export default {
   flex: 1 1 auto;
   justify-content: center;
   align-items: center;
+}
+
+.right-container .margin-box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 24px;
+}
+
+.margin-box .remaining-time {
+  align-self: flex-end;
+  font-weight: 300;
+  font-size: 0.65rem;
+  color: #4158d0;
 }
 
 .right-container .form-box {
@@ -302,5 +384,22 @@ export default {
   font-size: 0.85rem;
   word-break: break-all;
   color: red;
+}
+
+.invalid-mask {
+  width: 256px;
+  height: 280px;
+  position: fixed;
+  float: left;
+  background: rgba(246, 246, 246, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.invalid-mask .content {
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #4158d0;
 }
 </style>

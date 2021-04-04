@@ -3,7 +3,7 @@ import * as actions from './actions';
 import * as getters from './getters';
 
 import { MDI_ICONS } from '@lib/mdi-icons.js';
-import { DEF_DRAWER_POS } from './mod-cnsts';
+import { DEF_DRAWER_POS, SCAN_SIGIN_MODE } from './mod-cnsts';
 
 export default {
   namespaced: true,
@@ -14,6 +14,7 @@ export default {
     drawerPosition: DEF_DRAWER_POS,
     fullScreenState: false,
     navMini: false,
+    siginMode: SCAN_SIGIN_MODE,
   },
   actions,
   getters: {
