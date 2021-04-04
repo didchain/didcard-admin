@@ -111,7 +111,7 @@ import {
 
 import QRCode from 'qrcode';
 
-const MAX_SECOND = 300;
+const MAX_SECOND = 100;
 const timerEnabled = true;
 const acc = {
   mainAddress: '0xb2a3542b978119ecff55ed9b6e4af354a8a07a16',
@@ -170,7 +170,7 @@ export default {
       if (!timerEnabled) return false;
       if (!this.isScanSiginMode) return false;
 
-      return invalid;
+      return this.timeCounter <= 0;
     },
     qrDataUrl() {
       let text = this.dataUrl;
