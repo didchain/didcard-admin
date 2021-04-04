@@ -13,7 +13,7 @@
       </div>
       <div class="right-container">
         <div class="margin-box" style="height: 10vh">
-          <div v-if="isScanSiginMode" class="remaining-time">
+          <div v-if="false && isScanSiginMode" class="remaining-time">
             二维码将在 {{ lefttimes }} 秒后失效.
           </div>
         </div>
@@ -44,6 +44,11 @@
 
           <v-form v-if="isScanSiginMode" class="login-form">
             <div class="qrcode-img-wrap">
+              <div class="left-timer-box">
+                <div v-if="isScanSiginMode" class="remaining-time">
+                  二维码将在 {{ lefttimes }} 秒后失效.
+                </div>
+              </div>
               <img :src="qrDataUrl" alt="" class="qrcode-box" />
               <div style="font-size: 0.75rem">手机APP扫此二维码登录</div>
               <div v-if="qrinvalid" class="invalid-mask">
@@ -86,10 +91,10 @@
           </v-btn>
         </div>
         <div class="error-box">
-          <div v-if="!metamaskEnabled" class="tip-title">
+          <div v-if="!metamaskEnabled && !isScanSiginMode" class="tip-title">
             <h4>当前系统登录不可用,请先解决以下问题：</h4>
           </div>
-          <div v-if="!metamaskEnabled" class="error-msg">
+          <div v-if="!metamaskEnabled && !isScanSiginMode" class="error-msg">
             {{ getErrMessage }}
           </div>
         </div>
@@ -111,7 +116,7 @@ import {
 
 import QRCode from 'qrcode';
 
-const MAX_SECOND = 100;
+const MAX_SECOND = 30; // 100;
 const timerEnabled = true;
 const acc = {
   mainAddress: '0xb2a3542b978119ecff55ed9b6e4af354a8a07a16',
@@ -212,36 +217,37 @@ export default {
         this.qrcodeTimer &&
         clearInterval(this.qrcodeTimer);
     },
-    startCheckTimer() {
-      if (!this.checkTimer) {
+    startCheckTimer(froce = false) {
+      froce && (this.mocker = 0) && clearInterval(this.checkTimer);
+      if (froce || !this.checkTimer) {
         const that = this;
         this.checkTimer = setInterval(async () => {
           that.mocker = that.mocker + 1;
           // TODO api request
           console.log('checkTimer log:', that.mocker);
-          if (that.mocker > 20) {
-            console.log('>>>>>>that.mocker >>>>>>>>>>>', that.mocker);
-            clearInterval(that.checkTimer);
-            // const res = await that.$store.dispatch('login2Fa', data);
-            // if (res) await that.$router.replace({ path: '/' });
-            const authState = {
-              did: '9197735hsgd',
-              accessToken: '12345646',
-              username: 'scanUser',
-              role: 'admin',
-            };
-            const saveResp = await this.$store.dispatch(
-              'siginSaveState',
-              authState,
-            );
-            if (saveResp) await that.$router.replace({ path: '/' });
-            // await that.routerAuthHome(data);
-          }
+          // if (that.mocker > 20) {
+          //   console.log('>>>>>>that.mocker >>>>>>>>>>>', that.mocker);
+          //   clearInterval(that.checkTimer);
+          //   // const res = await that.$store.dispatch('login2Fa', data);
+          //   // if (res) await that.$router.replace({ path: '/' });
+          //   const authState = {
+          //     did: '9197735hsgd',
+          //     accessToken: '12345646',
+          //     username: 'scanUser',
+          //     role: 'admin',
+          //   };
+          //   const saveResp = await this.$store.dispatch(
+          //     'siginSaveState',
+          //     authState,
+          //   );
+          //   if (saveResp) await that.$router.replace({ path: '/' });
+          //   // await that.routerAuthHome(data);
+          // }
         }, 1000);
       }
     },
     clearCheckTimer() {
-      this.checkTimer && clearInterval(this.checkTimer);
+      this.checkTimer && (this.mocker = 0) && clearInterval(this.checkTimer);
     },
     async signinHandler() {
       try {
@@ -255,7 +261,7 @@ export default {
     },
     async changedQrcodeLoginHandle() {
       this.startQrcodeTimer();
-      this.startCheckTimer();
+      this.startCheckTimer(true);
       this.$store.dispatch('ui/setSigninMode', SCAN_SIGIN_MODE);
     },
     changedMetaMaskLoginHandle() {
@@ -279,7 +285,7 @@ export default {
       let data = await QRCode.toDataURL(text);
       // console.log('data>>>>>', data);
       this.startQrcodeTimer();
-      this.startCheckTimer();
+      this.startCheckTimer(true);
       this.dataUrl = data;
     },
     generateQrcode(text) {
@@ -361,7 +367,8 @@ export default {
   padding: 0 24px;
 }
 
-.margin-box .remaining-time {
+.margin-box .remaining-time,
+.remaining-time {
   align-self: flex-end;
   font-weight: 300;
   font-size: 0.65rem;
@@ -424,7 +431,7 @@ export default {
 
 .invalid-mask {
   width: 256px;
-  height: 280px;
+  height: 320px;
   position: fixed;
   float: left;
   background: rgba(246, 246, 246, 0.8);
