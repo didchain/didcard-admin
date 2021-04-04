@@ -29,7 +29,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     historyApiFallback: true, //controll router mode history
     proxy: {
       '/api': {
-        target: 'http://39.99.198.143:50999/api', //47.113.87.58,39.99.198.143
+        target: 'http://39.99.198.143:60998/api', //47.113.87.58,39.99.198.143
         changeOrigin: true,
         pathRewrite: {
           '^/api': '',

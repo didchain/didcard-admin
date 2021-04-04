@@ -24,7 +24,7 @@ axiosProxy.interceptors.response.use(
      * response [status,err_msg,err_code,data]
      */
     if (response.status === 200) {
-      console.log(response.request.responseURL, response);
+      if (!isProd) console.log(response.request.responseURL, response);
       if (response.data) {
         return Promise.resolve(response.data || null);
       } else {
@@ -101,20 +101,6 @@ function handleNetworkError(err) {
   }
 
   return err;
-}
-
-function tranResponse(resp) {
-  if (resp.result_code == 0) {
-    return {
-      message: resp.message,
-      data: resp.data || true,
-    };
-  } else {
-    return {
-      code: resp.result_code,
-      errMsg: resp.message,
-    };
-  }
 }
 
 export default axiosProxy;

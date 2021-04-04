@@ -80,7 +80,7 @@
             使用手机扫码登录
           </v-btn>
           <v-btn
-            v-if="isScanSiginMode"
+            v-if="!1 && isScanSiginMode"
             text
             color="light-blue darken-1"
             type="primary"
@@ -114,16 +114,19 @@ import {
   METAMASK_SIGIN_MODE,
 } from '@/store/modules/ui/mod-cnsts.js';
 
+import { getTokenApi, checkLoginedApi } from '@lib/api/did-demo.js';
+
 import QRCode from 'qrcode';
 
-const MAX_SECOND = 30; // 100;
+const MAX_SECOND = 60; // 100;
 const timerEnabled = true;
-const acc = {
-  mainAddress: '0xb2a3542b978119ecff55ed9b6e4af354a8a07a16',
-  subAddress: 'BP8tALc4Pr9Dt1AsWd3kMkqN2bbQL8JDibB7mwKrzDBUfK',
-  subCipher:
-    '2Z5CXECU24THRHPMvSPzz6RYiZzRgWgJMogy8f7oxWzpLUK38S8aaPAL4A2ixK9X2YqBkj3js9gMNqyPodUvggWsynKtBxijnavCevJWQuevDv',
-  version: 1,
+const qrOpts = {
+  errorCorrectionLevel: 'M',
+  margin: 1,
+  color: {
+    dark: '#010599FF',
+    light: '#FFBF60FF',
+  },
 };
 
 export default {
@@ -141,6 +144,7 @@ export default {
       checkLocked: false,
       timeCounter: -1,
       mocker: 1,
+      checkParam: null,
       mainAddr: '0x2f94432422ce1C99FaA99171ada3effb570319B0',
       ctrl: {
         qrcodeLogin: true,
@@ -195,20 +199,21 @@ export default {
   },
   methods: {
     destoryTimers() {
-      this.checkTimer && clearInterval(this.checkTimer);
+      !!this.checkTimer && clearInterval(this.checkTimer);
       (this.timeCounter = -1) &&
         this.qrcodeTimer &&
         clearInterval(this.qrcodeTimer);
     },
     startQrcodeTimer() {
-      this.qrcodeTimer && this.clearQrcodeTimer();
+      !!this.qrcodeTimer && this.clearQrcodeTimer();
       const that = this;
       this.timeCounter = MAX_SECOND;
       this.qrcodeTimer = setInterval(() => {
         that.timeCounter = that.timeCounter - 1;
-        console.log('>>>>>>>>>>>>>>>>>', that.timeCounter);
+        // console.log('>>>>>>>>>>>>>>>>>', that.timeCounter);
         if (that.timeCounter <= 0) {
           that.clearQrcodeTimer();
+          that.clearCheckTimer();
         }
       }, 1000);
     },
@@ -218,36 +223,71 @@ export default {
         clearInterval(this.qrcodeTimer);
     },
     startCheckTimer(froce = false) {
+      const interval = 2000;
       froce && (this.mocker = 0) && clearInterval(this.checkTimer);
       if (froce || !this.checkTimer) {
         const that = this;
         this.checkTimer = setInterval(async () => {
+          const checkParam = that.checkParam;
+          // api request
+          const respData = await checkLoginedApi(checkParam);
           that.mocker = that.mocker + 1;
-          // TODO api request
-          console.log('checkTimer log:', that.mocker);
-          // if (that.mocker > 20) {
-          //   console.log('>>>>>>that.mocker >>>>>>>>>>>', that.mocker);
-          //   clearInterval(that.checkTimer);
-          //   // const res = await that.$store.dispatch('login2Fa', data);
-          //   // if (res) await that.$router.replace({ path: '/' });
-          //   const authState = {
-          //     did: '9197735hsgd',
-          //     accessToken: '12345646',
-          //     username: 'scanUser',
-          //     role: 'admin',
-          //   };
-          //   const saveResp = await this.$store.dispatch(
-          //     'siginSaveState',
-          //     authState,
-          //   );
-          //   if (saveResp) await that.$router.replace({ path: '/' });
-          //   // await that.routerAuthHome(data);
-          // }
-        }, 1000);
+          const { result_code, message, data } = respData;
+          console.log('checkTimer>>>>', that.checkTimer);
+
+          if (result_code === 0 && data) {
+            console.log('checkLoginedApi>>>>', data);
+            const { redir_url, signature = {}, user_desc = {} } = data;
+            const accessToken = signature.content
+              ? signature.content.random_token || ''
+              : '';
+            const did = user_desc.did || '';
+            const systemNo = user_desc.unit_name || '';
+            const role = user_desc.serial_number || '';
+            const username = user_desc.name || '';
+
+            if (!did || !accessToken || !username || !role) {
+              console.error('api/check response data illegal.', data);
+            } else {
+              const authState = {
+                role,
+                did,
+                accessToken,
+                username,
+              };
+              const storeResp = await that.$store.dispatch(
+                'siginSaveState',
+                authState,
+              );
+
+              if (storeResp && storeResp.status === 1) {
+                that.destoryTimers();
+                await that.$router.replace({ path: '/' });
+              }
+            }
+          } else {
+            // mock
+            // if (that.mocker > 5) {
+            //   const _authState = {
+            //     role: 'admin',
+            //     did: '12312123',
+            //     accessToken: 'werwerwer',
+            //     username: 'mockUser',
+            //   };
+            //   const storeResp = await that.$store.dispatch(
+            //     'siginSaveState',
+            //     _authState,
+            //   );
+            //   if (storeResp && storeResp.status === 1) {
+            //     await that.$router.replace({ path: '/' });
+            //   }
+            // }
+          }
+        }, interval);
       }
     },
     clearCheckTimer() {
-      this.checkTimer && (this.mocker = 0) && clearInterval(this.checkTimer);
+      !!this.checkTimer && (this.mocker = 0) && clearInterval(this.checkTimer);
     },
     async signinHandler() {
       try {
@@ -270,23 +310,24 @@ export default {
       this.$store.dispatch('ui/setSigninMode', METAMASK_SIGIN_MODE);
     },
     async refreshQrcodeHandle() {
-      const text = JSON.stringify(acc) + new Date().getTime();
+      try {
+        const randomResp = await getTokenApi();
+        const { authUrl, randomToken } = randomResp;
 
-      this.qrcodeText = text;
-      const opts = {
-        errorCorrectionLevel: 'M',
-        margin: 1,
-        color: {
-          dark: '#010599FF',
-          light: '#FFBF60FF',
-        },
-      };
-      this.clearQrcodeTimer();
-      let data = await QRCode.toDataURL(text);
+        const qrContent = { auth_url: authUrl, random_token: randomToken };
+        this.checkParam = qrContent;
+        this.qrcodeText = JSON.stringify(qrContent);
+        this.clearQrcodeTimer();
+        let data = await QRCode.toDataURL(this.qrcodeText);
+        this.startQrcodeTimer();
+        this.startCheckTimer(true);
+        this.dataUrl = data;
+      } catch (err) {
+        console.log(err);
+        this.$toast(err.message, 'error', 6000);
+      }
+
       // console.log('data>>>>>', data);
-      this.startQrcodeTimer();
-      this.startCheckTimer(true);
-      this.dataUrl = data;
     },
     generateQrcode(text) {
       let that = this;
