@@ -118,7 +118,7 @@ import { getTokenApi, checkLoginedApi } from '@lib/api/did-demo.js';
 
 import QRCode from 'qrcode';
 
-const MAX_SECOND = 60; // 100;
+const MAX_SECOND = 100; // 100;
 const timerEnabled = true;
 const qrOpts = {
   errorCorrectionLevel: 'M',
@@ -262,7 +262,9 @@ export default {
 
               if (storeResp && storeResp.status === 1) {
                 that.destoryTimers();
-                await that.$router.replace({ path: '/' });
+                clearInterval(that.checkTimer);
+                clearInterval(that.qrcodeTimer);
+                await that.$router.push({ path: '/' });
               }
             }
           } else {

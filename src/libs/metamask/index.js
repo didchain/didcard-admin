@@ -39,13 +39,17 @@ export const CHAINID_MAP_KEY = {
 };
 
 export const detectingMetamaskEnv = async () => {
-  const provider = await detectEthereumProvider({
-    mustBeMetaMask: true,
-    silent: false,
-    timeout: 3000,
-  });
+  try {
+    const provider = await detectEthereumProvider({
+      mustBeMetaMask: true,
+      silent: false,
+      timeout: 3000,
+    });
 
-  return provider;
+    return provider;
+  } catch (error) {
+    throw error;
+  }
 };
 
 /**

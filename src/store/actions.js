@@ -53,18 +53,23 @@ export const login = async ({ dispatch, commit }) => {
 export const siginSaveState = async ({ dispatch, commit }, authState) => {
   const { did, username, role, accessToken } = authState;
   await dispatch('acc/setUsername', username);
+
+  let _role = 'user';
   // TODO 如果没有给默认 user
   if (role !== 'admin' && role !== 'user') {
-    role = 'user';
+    _role = 'user';
+  } else {
+    _role = role;
   }
-  await dispatch('auth/loadNavMenus', role);
-  commit(types.UPD_ACCESS_ROLE, role);
+
+  await dispatch('auth/loadNavMenus', _role);
+  commit(types.UPD_ACCESS_ROLE, _role);
   commit(types.UPD_ACCESS_TOKEN, accessToken);
   return Promise.resolve({
     status: 1,
     message: 'success',
     data: {
-      role,
+      role: _role,
       did,
       username,
     },

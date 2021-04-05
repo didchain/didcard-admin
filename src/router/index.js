@@ -21,16 +21,18 @@ VueRouter.prototype.push = function push(location, onResolve, onReject) {
 router.beforeResolve(async (to, from, next) => {
   if (to.matched.some((rec) => rec.meta && rec.meta.auth)) {
     const accessData = await Store.getters['accessData'];
+    console.log('>>>>>accessData>>>>>>>>', accessData);
 
     const needLogin =
       !accessData || !accessData.accessToken || !accessData.accessRole;
 
     // console.log('>>>>', from, accessData, await Store.getters['auth/navMenus']);
     if (needLogin) {
+      console.log('>>>>>accessData>>>>>>>>', accessData);
       //TODO
       next({ path: '/signin' });
       // if (!(await Store.getters['auth/navMenus'])) {
-      await Store.dispatch('auth/loadNavMenus', 'users');
+      await Store.dispatch('auth/loadNavMenus', accessData.accessRole);
       // }
 
       // next();

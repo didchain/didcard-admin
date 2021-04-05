@@ -30,7 +30,7 @@ export const checkMetaMaskEnv = async ({ commit }) => {
       commit(types.UPD_METAMASK_ERROR, '需要MetaMask浏览器插件');
     }
   } catch (err) {
-    console.log('>>>>>>>>>>>>>>>>>>>', err);
+    console.log('>>>>checkMetaMaskEnv>>>>>>>>>>>>>>>', err);
     commit(types.UPD_METAMASK_ENABLED, false);
     commit(types.UPD_METAMASK_ERROR, err.message);
   }
